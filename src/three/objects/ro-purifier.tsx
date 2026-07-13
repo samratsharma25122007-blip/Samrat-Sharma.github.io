@@ -16,37 +16,38 @@ interface ROPurifierProps {
 
 /**
  * ROPurifier — the hero centerpiece, a procedural countertop RO matching the
- * concept artwork: glossy white top, charcoal body, blue LED strip and a thin
- * water stream pouring into a glass tumbler (PRD Parts 3 & 4).
+ * reference frames: a tall glossy black front with a white body, a thin blue
+ * LED, a "P" brand mark and a water stream into a glass tumbler (PRD Parts 3 & 4).
  *
- * Built from rounded primitives with physically-based materials. Modeled around
- * a clean node structure so a real Draco-compressed GLB can replace it later
- * without changing the surrounding scene or interaction wiring.
+ * Built from rounded primitives with physically-based clearcoat materials and a
+ * fully modeled back so it reads correctly through a 360° drag rotation. The
+ * node layout mirrors a real GLB so an authored model can replace it later
+ * without rewiring the scene or interaction.
  */
 export function ROPurifier({ animate, rotationRef }: ROPurifierProps) {
   const group = useRef<THREE.Group>(null);
   const streamRef = useRef<THREE.Mesh>(null);
 
-  // Premium clearcoat materials.
   const whiteBody = useMemo(
     () =>
       new THREE.MeshPhysicalMaterial({
-        color: 0xf3f6f8,
-        roughness: 0.35,
+        color: 0xeef2f5,
+        roughness: 0.4,
         metalness: 0.05,
-        clearcoat: 0.8,
-        clearcoatRoughness: 0.3,
+        clearcoat: 0.6,
+        clearcoatRoughness: 0.4,
       }),
     [],
   );
-  const darkBody = useMemo(
+  const blackPanel = useMemo(
     () =>
       new THREE.MeshPhysicalMaterial({
-        color: 0x15191e,
-        roughness: 0.28,
-        metalness: 0.35,
+        color: 0x0b0e12,
+        roughness: 0.15,
+        metalness: 0.4,
         clearcoat: 1,
-        clearcoatRoughness: 0.25,
+        clearcoatRoughness: 0.12,
+        envMapIntensity: 1.2,
       }),
     [],
   );
@@ -55,8 +56,13 @@ export function ROPurifier({ animate, rotationRef }: ROPurifierProps) {
       new THREE.MeshStandardMaterial({
         color: SCENE_COLORS.oceanShallow,
         emissive: new THREE.Color(SCENE_COLORS.oceanShallow),
-        emissiveIntensity: 2.2,
+        emissiveIntensity: 2.4,
+        toneMapped: false,
       }),
+    [],
+  );
+  const logoMaterial = useMemo(
+    () => new THREE.MeshStandardMaterial({ color: 0xdfe6ec, roughness: 0.5 }),
     [],
   );
   const glassMaterial = useMemo(
@@ -64,12 +70,11 @@ export function ROPurifier({ animate, rotationRef }: ROPurifierProps) {
       new THREE.MeshPhysicalMaterial({
         color: 0xffffff,
         roughness: 0.05,
-        metalness: 0,
         transmission: 0.9,
         thickness: 0.4,
         ior: 1.33,
         transparent: true,
-        opacity: 0.6,
+        opacity: 0.55,
       }),
     [],
   );
@@ -80,7 +85,7 @@ export function ROPurifier({ animate, rotationRef }: ROPurifierProps) {
         roughness: 0.1,
         transmission: 0.6,
         transparent: true,
-        opacity: 0.7,
+        opacity: 0.8,
         ior: 1.33,
       }),
     [],
@@ -88,11 +93,10 @@ export function ROPurifier({ animate, rotationRef }: ROPurifierProps) {
 
   useFrame((state) => {
     if (!group.current) return;
-    // Idle: very subtle yaw sway (front stays toward camera) + user drag.
-    const idle = animate ? Math.sin(state.clock.elapsedTime * 0.2) * 0.06 : 0;
+    const idle = animate ? Math.sin(state.clock.elapsedTime * 0.2) * 0.05 : 0;
+    // Ease toward user-driven rotation + idle sway.
     group.current.rotation.y += (idle + rotationRef.current - group.current.rotation.y) * 0.08;
 
-    // Gentle water-stream shimmer.
     if (streamRef.current && animate) {
       const s = 1 + Math.sin(state.clock.elapsedTime * 12) * 0.06;
       streamRef.current.scale.x = s;
@@ -102,38 +106,67 @@ export function ROPurifier({ animate, rotationRef }: ROPurifierProps) {
 
   return (
     <group ref={group} position={[0, 0.25, 0]}>
-      {/* Charcoal main body. */}
-      <RoundedBox args={[0.86, 0.98, 0.52]} radius={0.08} smoothness={4} position={[0, 0.72, 0]} material={darkBody} castShadow />
+      {/* White outer body (tall slab). */}
+      <RoundedBox
+        args={[0.82, 1.5, 0.56]}
+        radius={0.09}
+        smoothness={4}
+        position={[0, 0.98, 0]}
+        material={whiteBody}
+        castShadow
+        receiveShadow
+      />
 
-      {/* White top cap. */}
-      <RoundedBox args={[0.92, 0.36, 0.56]} radius={0.1} smoothness={4} position={[0, 1.32, 0]} material={whiteBody} castShadow />
+      {/* Glossy black front panel. */}
+      <RoundedBox
+        args={[0.7, 1.34, 0.08]}
+        radius={0.05}
+        smoothness={4}
+        position={[0, 1.04, 0.26]}
+        material={blackPanel}
+        castShadow
+      />
 
-      {/* Recessed dispensing niche on the front. */}
-      <RoundedBox args={[0.46, 0.5, 0.12]} radius={0.04} smoothness={3} position={[0, 0.62, 0.24]} material={darkBody} />
+      {/* "P" brand mark (simple ring + stem, upper front). */}
+      <group position={[0, 1.42, 0.31]}>
+        <mesh material={logoMaterial}>
+          <torusGeometry args={[0.05, 0.012, 8, 24]} />
+        </mesh>
+        <mesh position={[-0.05, -0.06, 0]} material={logoMaterial}>
+          <boxGeometry args={[0.012, 0.12, 0.012]} />
+        </mesh>
+      </group>
 
-      {/* Blue vertical LED strip. */}
-      <mesh position={[0, 1.0, 0.27]} material={ledMaterial}>
-        <boxGeometry args={[0.04, 0.28, 0.02]} />
+      {/* Vertical blue LED strip. */}
+      <mesh position={[0, 1.06, 0.31]} material={ledMaterial}>
+        <boxGeometry args={[0.035, 0.3, 0.02]} />
       </mesh>
 
-      {/* Dispensing nozzle. */}
-      <mesh position={[0, 0.74, 0.28]} material={darkBody}>
-        <cylinderGeometry args={[0.03, 0.02, 0.1, 12]} />
+      {/* Recessed dispensing area + nozzle. */}
+      <RoundedBox args={[0.5, 0.34, 0.1]} radius={0.03} smoothness={3} position={[0, 0.5, 0.28]} material={blackPanel} />
+      <mesh position={[0, 0.62, 0.32]} material={blackPanel}>
+        <cylinderGeometry args={[0.028, 0.02, 0.09, 12]} />
       </mesh>
+
+      {/* Back vents for a believable 360° read. */}
+      {[-0.18, 0, 0.18].map((x, i) => (
+        <mesh key={i} position={[x, 1.1, -0.29]} material={whiteBody}>
+          <boxGeometry args={[0.06, 0.7, 0.01]} />
+        </mesh>
+      ))}
 
       {/* Water stream into the glass. */}
-      <mesh ref={streamRef} position={[0, 0.52, 0.28]} material={waterMaterial}>
-        <cylinderGeometry args={[0.012, 0.012, 0.36, 8]} />
+      <mesh ref={streamRef} position={[0, 0.4, 0.32]} material={waterMaterial}>
+        <cylinderGeometry args={[0.012, 0.012, 0.34, 8]} />
       </mesh>
 
-      {/* Glass tumbler on the front tray. */}
-      <group position={[0, 0.16, 0.3]}>
-        <mesh material={glassMaterial}>
-          <cylinderGeometry args={[0.1, 0.08, 0.22, 24]} />
+      {/* Glass tumbler with water on the podium. */}
+      <group position={[0, 0.14, 0.34]}>
+        <mesh material={glassMaterial} castShadow>
+          <cylinderGeometry args={[0.1, 0.08, 0.24, 24]} />
         </mesh>
-        {/* Water inside the glass. */}
-        <mesh position={[0, -0.02, 0]} material={waterMaterial}>
-          <cylinderGeometry args={[0.088, 0.07, 0.14, 24]} />
+        <mesh position={[0, -0.03, 0]} material={waterMaterial}>
+          <cylinderGeometry args={[0.088, 0.07, 0.15, 24]} />
         </mesh>
       </group>
     </group>

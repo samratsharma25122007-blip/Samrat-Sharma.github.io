@@ -60,10 +60,9 @@ export function Particles({ count, animate }: ParticlesProps) {
         size={0.05}
         color={SCENE_COLORS.sunWarm}
         transparent
-        opacity={0.5}
+        opacity={0.45}
         depthWrite={false}
         sizeAttenuation
-        blending={THREE.AdditiveBlending}
       />
     </points>
   );
