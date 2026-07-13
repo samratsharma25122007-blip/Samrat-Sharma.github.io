@@ -10,12 +10,11 @@ export const dynamic = 'force-static';
  * canonical entry point for crawlers. `lastModified` uses build time.
  */
 export default function sitemap(): MetadataRoute.Sitemap {
-  return [
-    {
-      url: SITE.domain,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 1,
-    },
-  ];
+  const routes = ['', '/technology/', '/water-purification/', '/service/', '/about/', '/contact/'];
+  return routes.map((route) => ({
+    url: `${SITE.domain}${route}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly',
+    priority: route === '' ? 1 : 0.7,
+  }));
 }
