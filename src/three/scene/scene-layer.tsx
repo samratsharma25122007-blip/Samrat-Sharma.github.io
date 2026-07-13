@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic';
 
+import { HERO_MODE, PHOTOREAL_HERO } from '@/config/scene';
 import { HeroBackground } from '@/components/hero/hero-background';
 
 /**
@@ -23,10 +24,14 @@ const ExperienceCanvas = dynamic(
  * there is never a blank/white flash (PRD Part 10 load philosophy).
  */
 export function SceneLayer() {
+  // Use a photoreal image/video backdrop when in photoreal mode, or in cinematic
+  // mode once a clean living video is provided (empty podium, no baked UI).
+  const useBackdrop =
+    HERO_MODE === 'photoreal-image' || (HERO_MODE === 'cinematic' && Boolean(PHOTOREAL_HERO.videoPath));
+
   return (
     <>
-      {/* Photoreal image background (Option A); no-op until the file exists. */}
-      <HeroBackground />
+      {useBackdrop && <HeroBackground />}
       <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 h-[100dvh] w-full">
         <ExperienceCanvas />
       </div>

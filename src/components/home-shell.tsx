@@ -2,33 +2,42 @@
 
 import { useExperienceStore } from '@/state/experience-store';
 import { SITE, NAV_LINKS } from '@/config/site';
-import { PHOTOREAL_HERO } from '@/config/scene';
+import { HERO_MODE, PHOTOREAL_HERO } from '@/config/scene';
 import { SiteHeader } from '@/components/layout/site-header';
 import { HeroSection } from '@/components/hero/hero-section';
 import { HeroFX } from '@/components/hero/hero-fx';
 import { HeroHotspots } from '@/components/hero/hero-hotspots';
+import { GlassNav } from '@/components/cinematic/glass-nav';
+import { CinematicStory } from '@/components/cinematic/cinematic-story';
 
 /**
- * HomeShell — chooses the hero presentation based on whether the photoreal
- * background image loaded.
+ * HomeShell — chooses the hero presentation.
  *
- *  - Photoreal (image present): the image (with its baked-in UI) is the hero and
- *    the interactive 3D RO composites on top. The live DOM UI would duplicate
- *    the baked UI, so it is hidden — but a screen-reader/SEO-only layer stays in
- *    the DOM so the page remains crawlable and accessible.
- *  - Fallback (no image): the full functional DOM UI + procedural 3D scene.
+ *  - Cinematic (redesign): the living procedural 3D world + RO behind, with a
+ *    floating glass-capsule nav and a minimal scroll story on top.
+ *  - Photoreal-image: the baked image backdrop + composited RO (baked UI hidden,
+ *    hotspots make it clickable), or the full functional DOM as a fallback.
  */
 export function HomeShell() {
   const photoreal = useExperienceStore((state) => state.heroImageLoaded);
 
-  // Only hide the live UI when the image itself already contains the UI.
+  if (HERO_MODE === 'cinematic') {
+    return (
+      <>
+        <GlassNav />
+        <main>
+          <CinematicStory />
+        </main>
+      </>
+    );
+  }
+
+  // Photoreal-image mode: hide the live UI when the image bakes in its own.
   if (photoreal && PHOTOREAL_HERO.imageHasBakedUI) {
     return (
       <>
-        {/* Living background overlays + clickable hotspots over the baked UI. */}
         <HeroFX />
         <HeroHotspots />
-        {/* SEO / screen-reader content (the visible copy is baked into the image). */}
         <main className="sr-only">
           <h1>Pure Water. Protected Life.</h1>
           <p>{SITE.description}</p>

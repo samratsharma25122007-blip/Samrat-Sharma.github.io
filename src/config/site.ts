@@ -14,6 +14,14 @@ export const SITE = {
   locale: 'en_IN',
 } as const;
 
+/** Minimal cinematic nav — only a few items float in the glass capsule. */
+export const CINEMATIC_NAV = [
+  { id: 'story', label: 'Story', href: '#story' },
+  { id: 'technology', label: 'Technology', href: '/technology/' },
+  { id: 'service', label: 'Service', href: '/service/' },
+  { id: 'contact', label: 'Contact', href: '/contact/' },
+] as const;
+
 /** Primary navigation (concept artwork) — real routes. */
 export const NAV_LINKS = [
   { id: 'home', label: 'Home', href: '/' },

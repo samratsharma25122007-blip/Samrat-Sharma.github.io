@@ -12,6 +12,14 @@
 import { COLORS } from '@/config/design-tokens';
 
 /**
+ * Hero presentation mode:
+ *  - 'cinematic': living procedural 3D world + minimal floating glass UI (the
+ *    ultra-premium product-first redesign). The RO is the hero on every screen.
+ *  - 'photoreal-image': the baked photoreal image backdrop + composited RO.
+ */
+export const HERO_MODE: 'cinematic' | 'photoreal-image' = 'cinematic';
+
+/**
  * Photoreal hero (Option A) — the AI-rendered scene image as the background with
  * the interactive 3D RO composited on the pedestal. Drop the image at the path
  * below (ideally with the RO removed / empty podium) and it activates.
@@ -75,9 +83,9 @@ export const OCEAN_CONFIG = {
     b: [0.7, 0.9, 0.22, 18] as const,
     c: [-0.6, 0.5, 0.16, 9] as const,
   },
-  amplitude: 1.0,
-  speed: 0.5,
-  foamThreshold: 0.55,
+  amplitude: 0.6,
+  speed: 0.32,
+  foamThreshold: 0.7,
 } as const;
 
 /**
