@@ -1,16 +1,21 @@
 import { HeroContent } from '@/components/hero/hero-content';
+import { SceneLayer } from '@/three/scene/scene-layer';
 
 /**
  * Home — the single continuous experience (PRD Part 13).
  *
- * Phase 1 renders the semantic hero content layer. Subsequent phases mount the
- * persistent R3F world *behind* this DOM without changing the page's structure,
- * preserving the crawlable content and the single-page narrative.
+ * The persistent R3F world (SceneLayer) sits in a fixed layer behind the DOM;
+ * the semantic, crawlable content renders above it. This preserves the
+ * single-page cinematic narrative while keeping text accessible to users and
+ * search engines alike.
  */
 export default function HomePage() {
   return (
-    <main>
-      <HeroContent />
-    </main>
+    <>
+      <SceneLayer />
+      <main>
+        <HeroContent />
+      </main>
+    </>
   );
 }

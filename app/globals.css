@@ -80,4 +80,17 @@
     border: 1px solid theme('colors.glass.border');
     box-shadow: theme('boxShadow.soft');
   }
+
+  /*
+   * Soft light bloom behind hero text — keeps dark ink legible over the bright
+   * 3D ocean without a hard panel. Anchored left where the headline sits.
+   */
+  .hero-scrim {
+    background: radial-gradient(
+      65% 75% at 28% 42%,
+      rgba(248, 251, 253, 0.88) 0%,
+      rgba(248, 251, 253, 0.4) 46%,
+      rgba(248, 251, 253, 0) 76%
+    );
+  }
 }

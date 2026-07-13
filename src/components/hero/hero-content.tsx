@@ -11,8 +11,12 @@ export function HeroContent() {
   return (
     <section
       aria-labelledby="hero-heading"
-      className="relative mx-auto flex min-h-[100dvh] max-w-content flex-col justify-center px-24 py-96"
+      className="relative isolate flex min-h-[100dvh] w-full flex-col justify-center px-24 py-96"
     >
+      {/* Legibility bloom behind the text, over the 3D ocean. */}
+      <div aria-hidden className="hero-scrim pointer-events-none absolute inset-0 -z-[1]" />
+
+      <div className="mx-auto w-full max-w-content">
       <p className="mb-24 inline-flex w-fit items-center gap-8 rounded-full glass-surface px-24 py-8 text-small font-medium text-deep">
         <span aria-hidden className="h-8 w-8 rounded-full bg-ocean" />
         India’s most trusted RO service — {SITE.tagline}
@@ -57,6 +61,7 @@ export function HeroContent() {
           </li>
         ))}
       </ul>
+      </div>
     </section>
   );
 }

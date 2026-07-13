@@ -59,6 +59,16 @@ export const QUALITY_PRESETS: Record<Exclude<QualityTier, 'adaptive'>, QualityPr
   },
 };
 
+/**
+ * Resolve a tier (possibly 'adaptive') to a concrete preset. 'adaptive' should
+ * already be resolved by useQualityTier before render, but we default to 'high'
+ * defensively so the scene never reads an undefined budget.
+ */
+export function resolveQualityPreset(tier: QualityTier): QualityPreset {
+  if (tier === 'adaptive') return QUALITY_PRESETS.high;
+  return QUALITY_PRESETS[tier];
+}
+
 /** Reduced-motion / minimum floor used when accessibility settings demand it. */
 export const MINIMAL_PRESET: QualityPreset = {
   maxDpr: 1,
