@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Inter, Manrope } from 'next/font/google';
+import { Inter, Playfair_Display } from 'next/font/google';
 
 import { AppProviders } from '@/providers/app-providers';
 import { metadata as siteMetadata, jsonLd } from '@/config/seo';
@@ -7,8 +7,9 @@ import { metadata as siteMetadata, jsonLd } from '@/config/seo';
 import './globals.css';
 
 /**
- * Variable fonts, preloaded with swap to avoid layout shift (PRD Part 12).
- * Inter = primary body/UI, Manrope = display/headings.
+ * Fonts per the approved concept artwork (the visual source of truth):
+ * Inter for body/UI, Playfair Display (serif) for headings. Preloaded with
+ * swap to avoid layout shift (PRD Part 12).
  */
 const inter = Inter({
   subsets: ['latin'],
@@ -16,9 +17,9 @@ const inter = Inter({
   display: 'swap',
 });
 
-const manrope = Manrope({
+const playfair = Playfair_Display({
   subsets: ['latin'],
-  variable: '--font-manrope',
+  variable: '--font-playfair',
   display: 'swap',
   weight: ['400', '500', '600', '700'],
 });
@@ -35,7 +36,7 @@ export const viewport = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en-IN" className={`${inter.variable} ${manrope.variable}`}>
+    <html lang="en-IN" className={`${inter.variable} ${playfair.variable}`}>
       <body>
         {/* Structured data for search engines (Part 12). */}
         <script

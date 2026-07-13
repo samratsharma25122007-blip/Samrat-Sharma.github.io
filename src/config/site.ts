@@ -26,7 +26,33 @@ export const CONTACT = {
   serviceArea: 'Across India · 19,000+ PIN codes',
 } as const;
 
-/** Hero trust badges (PRD Part 3). */
+/** Hero inline highlights — matches the concept artwork's three feature marks. */
+export const HERO_HIGHLIGHTS = [
+  { id: 'advanced', label: 'Advanced Purification', icon: 'droplet' },
+  { id: 'mineral', label: 'Mineral Retention', icon: 'leaf' },
+  { id: 'safe', label: '100% Safe & Reliable', icon: 'shield' },
+] as const;
+
+/** Hero stats bar — matches the concept artwork's bottom metric strip. */
+export const HERO_STATS = [
+  { id: 'impurity', value: '99.9%', label: 'Impurity Removal' },
+  { id: 'mineral', value: 'Mineral', label: 'Retention' },
+  { id: 'safe', value: '100%', label: 'Safe Water' },
+  { id: 'families', value: '1M+', label: 'Happy Families' },
+] as const;
+
+/** The 7-stage purification pipeline (concept artwork right panel / Digital Twin). */
+export const PURIFICATION_STAGES = [
+  { id: '01', name: 'Sediment Filter', detail: 'Removes dust, sand & particles' },
+  { id: '02', name: 'Pre-Carbon Filter', detail: 'Reduces chlorine & impurities' },
+  { id: '03', name: 'RO Membrane', detail: 'Removes dissolved salts & chemicals' },
+  { id: '04', name: 'Post Carbon Filter', detail: 'Enhances taste & removes odor' },
+  { id: '05', name: 'Mineral Cartridge', detail: 'Retains essential minerals' },
+  { id: '06', name: 'UV Purification', detail: 'Kills bacteria & viruses' },
+  { id: '07', name: 'TDS Controller', detail: 'Balances TDS for better health' },
+] as const;
+
+/** Company proof / trust badges. */
 export const HERO_FEATURES = [
   { id: 'verified', label: 'Background-verified technicians', icon: 'shield' },
   { id: 'genuine', label: 'Genuine spare parts', icon: 'certificate' },

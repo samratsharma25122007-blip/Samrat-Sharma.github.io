@@ -48,7 +48,8 @@ const config: Config = {
       },
       fontFamily: {
         sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
-        display: ['var(--font-manrope)', 'var(--font-inter)', 'sans-serif'],
+        // Headings use Playfair Display (serif) per the concept artwork.
+        display: ['var(--font-playfair)', 'Georgia', 'serif'],
       },
       fontSize: {
         hero: [TYPOGRAPHY.hero.size, { lineHeight: TYPOGRAPHY.hero.leading, letterSpacing: TYPOGRAPHY.hero.tracking, fontWeight: TYPOGRAPHY.hero.weight }],

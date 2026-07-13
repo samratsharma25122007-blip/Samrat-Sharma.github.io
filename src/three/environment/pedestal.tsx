@@ -15,10 +15,21 @@ export function Pedestal() {
   const marble = useMemo(
     () =>
       new THREE.MeshStandardMaterial({
-        color: SCENE_COLORS.foam,
-        roughness: 0.18,
-        metalness: 0.05,
-        envMapIntensity: 0.6,
+        color: 0xfbf6ec, // warm cream marble (concept artwork)
+        roughness: 0.16,
+        metalness: 0.04,
+        envMapIntensity: 0.7,
+      }),
+    [],
+  );
+
+  const rim = useMemo(
+    () =>
+      new THREE.MeshStandardMaterial({
+        color: SCENE_COLORS.oceanShallow,
+        emissive: new THREE.Color(SCENE_COLORS.oceanShallow),
+        emissiveIntensity: 1.4,
+        roughness: 0.4,
       }),
     [],
   );
@@ -26,12 +37,21 @@ export function Pedestal() {
   return (
     <group position={[0, 0.12, 0]}>
       <mesh material={marble} castShadow receiveShadow>
-        <cylinderGeometry args={[0.9, 0.95, 0.25, 64]} />
+        <cylinderGeometry args={[0.92, 0.98, 0.26, 64]} />
+      </mesh>
+      {/* Glowing crystal rim at the base of the marble (artwork signature). */}
+      <mesh position={[0, -0.15, 0]} material={rim}>
+        <torusGeometry args={[0.96, 0.02, 12, 64]} />
       </mesh>
       {/* Wet base ring where the marble meets the lagoon. */}
-      <mesh position={[0, -0.12, 0]}>
-        <cylinderGeometry args={[1.0, 1.0, 0.04, 64]} />
-        <meshStandardMaterial color={SCENE_COLORS.oceanShallow} roughness={0.3} transparent opacity={0.6} />
+      <mesh position={[0, -0.2, 0]}>
+        <cylinderGeometry args={[1.05, 1.05, 0.04, 64]} />
+        <meshStandardMaterial
+          color={SCENE_COLORS.oceanShallow}
+          roughness={0.3}
+          transparent
+          opacity={0.5}
+        />
       </mesh>
     </group>
   );

@@ -14,6 +14,8 @@ import { Sunlight } from '@/three/environment/sunlight';
 import { Ocean } from '@/three/environment/ocean';
 import { Pedestal } from '@/three/environment/pedestal';
 import { PalmField } from '@/three/environment/palm-trees';
+import { Island } from '@/three/environment/island';
+import { Birds } from '@/three/environment/birds';
 import { Particles } from '@/three/environment/particles';
 import { PostProcessing } from '@/three/environment/post-processing';
 import { CameraRig } from '@/three/camera/camera-rig';
@@ -52,7 +54,8 @@ export function ExperienceCanvas() {
         position: [...CAMERA_CONFIG.position],
       }}
       onCreated={({ scene, gl }) => {
-        scene.fog = new THREE.Fog(SCENE_COLORS.fog, 45, 190);
+        // Light haze far off so the foreground lagoon stays crystal clear.
+        scene.fog = new THREE.Fog(SCENE_COLORS.fog, 90, 280);
         gl.setClearColor(SCENE_COLORS.zenith, 1);
       }}
     >
@@ -60,8 +63,10 @@ export function ExperienceCanvas() {
         <SkyDome cloudDensity={preset.cloudDensity} animate={animate} />
         <Sunlight shadowResolution={preset.shadowResolution} />
         <Ocean subdivisions={preset.waveSubdivisions} sparkle={sparkle} animate={animate} />
+        <Island />
         <Pedestal />
         <PalmField animate={animate} />
+        <Birds animate={animate} />
         <Particles count={preset.particles} animate={animate} />
         <CameraRig animate={animate} />
         <PostProcessing bloom={preset.bloom} />
