@@ -35,6 +35,14 @@ export const PHOTOREAL_HERO = {
    */
   videoPath: '',
   /**
+   * Clean backdrop for the CINEMATIC redesign — a still image or video of the
+   * tropical scene with an EMPTY podium and NO baked UI. When set, cinematic
+   * mode uses it (with the RO + minimal glass UI composited on top) instead of
+   * the procedural world. e.g. '/hero-bg.png' or '/hero-bg.mp4'.
+   */
+  cinematicSrc: '',
+  cinematicKind: 'image' as 'image' | 'video',
+  /**
    * Whether the background image already has the site UI painted into it.
    *  - true  (current mockup): hide the live DOM UI to avoid doubling.
    *  - false (clean plate): show the real functional UI over the image.

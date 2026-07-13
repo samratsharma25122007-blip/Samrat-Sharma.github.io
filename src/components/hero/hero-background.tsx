@@ -7,17 +7,21 @@ import { useExperienceStore } from '@/state/experience-store';
 import { usePrefersReducedMotion } from '@/lib/hooks/use-prefers-reduced-motion';
 import { usePointer } from '@/lib/hooks/use-pointer';
 
+interface HeroBackgroundProps {
+  src: string;
+  kind: 'image' | 'video';
+}
+
 /**
- * HeroBackground — the photoreal hero backdrop (Option A). Renders a looping
- * background video when one is configured (real birds/water/tree motion),
- * otherwise the still image. When the media loads, the store flag flips so the
- * 3D layer switches to compositing only the interactive RO over it; if the file
- * is missing the full procedural scene shows as a graceful fallback.
+ * HeroBackground — the photoreal hero backdrop (image or video). When the media
+ * loads, the store flag flips so the 3D layer composites only the interactive
+ * RO over it; if the file is missing the full procedural scene shows as a
+ * graceful fallback.
  *
- * A subtle pointer parallax + slow drift makes the still image feel alive
- * (disabled for reduced-motion); the video already carries its own motion.
+ * A subtle pointer parallax + slow drift makes a still image feel alive
+ * (disabled for reduced-motion); a video already carries its own motion.
  */
-export function HeroBackground() {
+export function HeroBackground({ src, kind }: HeroBackgroundProps) {
   const setHeroImageLoaded = useExperienceStore((s) => s.setHeroImageLoaded);
   const loaded = useExperienceStore((s) => s.heroImageLoaded);
   const prefersReducedMotion = usePrefersReducedMotion();
@@ -25,7 +29,7 @@ export function HeroBackground() {
   const mediaRef = useRef<HTMLImageElement | HTMLVideoElement>(null);
   const [errored, setErrored] = useState(false);
 
-  const useVideo = Boolean(PHOTOREAL_HERO.videoPath);
+  const useVideo = kind === 'video';
 
   // Media served from cache can be ready before React attaches load handlers.
   useEffect(() => {
@@ -37,10 +41,10 @@ export function HeroBackground() {
     } else if (el instanceof HTMLVideoElement && el.readyState >= 2) {
       setHeroImageLoaded(true);
     }
-  }, [setHeroImageLoaded]);
+  }, [setHeroImageLoaded, src]);
 
   useEffect(() => {
-    if (prefersReducedMotion || !loaded) return;
+    if (prefersReducedMotion || !loaded || useVideo) return;
     let raf = 0;
     const tick = () => {
       const el = mediaRef.current;
@@ -57,7 +61,7 @@ export function HeroBackground() {
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [pointer, prefersReducedMotion, loaded]);
+  }, [pointer, prefersReducedMotion, loaded, useVideo]);
 
   if (errored) return null;
 
@@ -67,7 +71,7 @@ export function HeroBackground() {
         <video
           ref={mediaRef as React.RefObject<HTMLVideoElement>}
           className="h-full w-full scale-105 object-cover will-change-transform"
-          src={PHOTOREAL_HERO.videoPath}
+          src={src}
           autoPlay
           muted
           loop
@@ -83,7 +87,7 @@ export function HeroBackground() {
         // eslint-disable-next-line @next/next/no-img-element
         <img
           ref={mediaRef as React.RefObject<HTMLImageElement>}
-          src={PHOTOREAL_HERO.imagePath}
+          src={src}
           alt=""
           className="h-full w-full scale-105 object-cover will-change-transform"
           onLoad={() => setHeroImageLoaded(true)}

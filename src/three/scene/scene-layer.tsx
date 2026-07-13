@@ -24,14 +24,22 @@ const ExperienceCanvas = dynamic(
  * there is never a blank/white flash (PRD Part 10 load philosophy).
  */
 export function SceneLayer() {
-  // Use a photoreal image/video backdrop when in photoreal mode, or in cinematic
-  // mode once a clean living video is provided (empty podium, no baked UI).
-  const useBackdrop =
-    HERO_MODE === 'photoreal-image' || (HERO_MODE === 'cinematic' && Boolean(PHOTOREAL_HERO.videoPath));
+  // Resolve the backdrop source per mode:
+  //  - photoreal-image: the baked image (or its video), RO composited over it.
+  //  - cinematic: a clean empty-podium image/video, if one has been provided;
+  //    otherwise the living procedural world is the backdrop.
+  let backdrop: { src: string; kind: 'image' | 'video' } | null = null;
+  if (HERO_MODE === 'photoreal-image') {
+    backdrop = PHOTOREAL_HERO.videoPath
+      ? { src: PHOTOREAL_HERO.videoPath, kind: 'video' }
+      : { src: PHOTOREAL_HERO.imagePath, kind: 'image' };
+  } else if (HERO_MODE === 'cinematic' && PHOTOREAL_HERO.cinematicSrc) {
+    backdrop = { src: PHOTOREAL_HERO.cinematicSrc, kind: PHOTOREAL_HERO.cinematicKind };
+  }
 
   return (
     <>
-      {useBackdrop && <HeroBackground />}
+      {backdrop && <HeroBackground src={backdrop.src} kind={backdrop.kind} />}
       <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 h-[100dvh] w-full">
         <ExperienceCanvas />
       </div>
