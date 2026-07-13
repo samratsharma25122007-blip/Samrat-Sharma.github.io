@@ -24,15 +24,32 @@ export function HeroBackground() {
   const imgRef = useRef<HTMLImageElement>(null);
   const [errored, setErrored] = useState(false);
 
+  // If the image is served from cache it can be `complete` before React attaches
+  // onLoad, so the event never fires. Detect that on mount.
+  useEffect(() => {
+    const img = imgRef.current;
+    if (img && img.complete) {
+      if (img.naturalWidth > 0) setHeroImageLoaded(true);
+      else setErrored(true);
+    }
+  }, [setHeroImageLoaded]);
+
   useEffect(() => {
     if (prefersReducedMotion || !loaded) return;
     let raf = 0;
     const tick = () => {
       const el = imgRef.current;
       if (el) {
-        const x = pointer.current.x * PHOTOREAL_HERO.parallaxStrength;
-        const y = pointer.current.y * PHOTOREAL_HERO.parallaxStrength * 0.6;
-        el.style.transform = `scale(1.08) translate(${x}px, ${y}px)`;
+        const t = performance.now() / 1000;
+        // Gentle ambient drift so the still image feels alive. Kept small so the
+        // baked-in UI at the image edges is never clipped.
+        const driftX = Math.sin(t * 0.12) * 4;
+        const driftY = Math.cos(t * 0.09) * 3;
+        const zoom = 1.03 + Math.sin(t * 0.06) * 0.008;
+        // ...plus a subtle pointer parallax on top.
+        const px = pointer.current.x * PHOTOREAL_HERO.parallaxStrength * 0.5;
+        const py = pointer.current.y * PHOTOREAL_HERO.parallaxStrength * 0.3;
+        el.style.transform = `scale(${zoom}) translate(${driftX + px}px, ${driftY + py}px)`;
       }
       raf = requestAnimationFrame(tick);
     };

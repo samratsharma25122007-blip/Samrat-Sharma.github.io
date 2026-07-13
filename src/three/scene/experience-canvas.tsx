@@ -23,13 +23,15 @@ import { PostProcessing } from '@/three/environment/post-processing';
 import { CameraRig } from '@/three/camera/camera-rig';
 import { ROPurifier } from '@/three/objects/ro-purifier';
 
-const CAMERA_TARGET = new THREE.Vector3(...CAMERA_CONFIG.target);
+const PHOTOREAL_CAM_POS = new THREE.Vector3(...PHOTOREAL_HERO.cameraPosition);
+const PHOTOREAL_CAM_TARGET = new THREE.Vector3(...PHOTOREAL_HERO.cameraTarget);
 
-/** Fixes the camera to look at the RO (photoreal composite — no rig movement). */
+/** Fixes the camera to frame the RO on the image's podium (no rig movement). */
 function StaticCamera() {
   const camera = useThree((s) => s.camera);
   useEffect(() => {
-    camera.lookAt(CAMERA_TARGET);
+    camera.position.copy(PHOTOREAL_CAM_POS);
+    camera.lookAt(PHOTOREAL_CAM_TARGET);
   }, [camera]);
   return null;
 }
@@ -85,7 +87,12 @@ export function ExperienceCanvas() {
         {photoreal ? (
           <>
             <Sunlight shadowResolution={1024} />
-            <ROPurifier animate={animate} rotationRef={roRotation} />
+            <ROPurifier
+              animate={animate}
+              rotationRef={roRotation}
+              position={PHOTOREAL_HERO.roPosition}
+              scale={PHOTOREAL_HERO.roScale}
+            />
             {/* Shadow-catcher grounds the RO on the image's pedestal. */}
             <mesh
               rotation-x={-Math.PI / 2}

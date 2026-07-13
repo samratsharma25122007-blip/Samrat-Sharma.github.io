@@ -12,6 +12,10 @@ interface ROPurifierProps {
   animate: boolean;
   /** External rotation (radians) applied from user drag interaction. */
   rotationRef: React.MutableRefObject<number>;
+  /** World position of the RO base (defaults to the procedural pedestal top). */
+  position?: readonly [number, number, number];
+  /** Uniform scale (photoreal composite tunes this to the image). */
+  scale?: number;
 }
 
 /**
@@ -24,7 +28,12 @@ interface ROPurifierProps {
  * node layout mirrors a real GLB so an authored model can replace it later
  * without rewiring the scene or interaction.
  */
-export function ROPurifier({ animate, rotationRef }: ROPurifierProps) {
+export function ROPurifier({
+  animate,
+  rotationRef,
+  position = [0, 0.25, 0],
+  scale = 1,
+}: ROPurifierProps) {
   const group = useRef<THREE.Group>(null);
   const streamRef = useRef<THREE.Mesh>(null);
 
@@ -105,7 +114,7 @@ export function ROPurifier({ animate, rotationRef }: ROPurifierProps) {
   });
 
   return (
-    <group ref={group} position={[0, 0.25, 0]}>
+    <group ref={group} position={position as unknown as THREE.Vector3} scale={scale}>
       {/* White outer body (tall slab). */}
       <RoundedBox
         args={[0.82, 1.5, 0.56]}

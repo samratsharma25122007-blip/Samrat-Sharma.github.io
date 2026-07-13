@@ -19,14 +19,28 @@ import { COLORS } from '@/config/design-tokens';
  * Placement is tuned to the image once it exists; these are starting values.
  */
 export const PHOTOREAL_HERO = {
-  imagePath: '/hero-plate.jpg',
-  /** RO transform over the image's pedestal (world units). */
-  roPosition: [0, 0.25, 0] as const,
-  roScale: 1,
-  /** Ground shadow-catcher Y (matches the pedestal top in the image). */
-  shadowPlaneY: 0.26,
-  /** Subtle background drift (Ken Burns) in px at the extremes. */
-  parallaxStrength: 14,
+  imagePath: '/hero-plate.png',
+  /**
+   * Whether the background image already has the site UI painted into it.
+   *  - true  (current mockup): hide the live DOM UI to avoid doubling.
+   *  - false (clean plate): show the real functional UI over the image.
+   * Flip to false when a UI-free environment plate is uploaded.
+   */
+  imageHasBakedUI: true,
+  /** Camera framing so the 3D RO lands on the image's marble podium. */
+  cameraPosition: [0, 1.15, 6.2] as const,
+  cameraTarget: [0, 1.15, 0] as const,
+  /**
+   * RO transform over the image's baked purifier — derived from the camera
+   * projection so the 3D RO covers the baked one (slightly larger so it stays
+   * covered through a full rotation).
+   */
+  roPosition: [-0.16, 0.59, 0] as const,
+  roScale: 1.05,
+  /** Ground shadow-catcher Y (matches the podium top in the image). */
+  shadowPlaneY: 0.6,
+  /** Subtle pointer parallax on the background (px at the extremes). */
+  parallaxStrength: 12,
 } as const;
 
 /** Camera setup (PRD Part 3): 35° perspective. */
