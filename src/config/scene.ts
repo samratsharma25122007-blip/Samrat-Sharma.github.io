@@ -31,14 +31,13 @@ export const PHOTOREAL_HERO = {
   cameraPosition: [0, 1.15, 6.2] as const,
   cameraTarget: [0, 1.15, 0] as const,
   /**
-   * RO transform over the image's baked purifier — derived from the camera
-   * projection so the 3D RO covers the baked one (slightly larger so it stays
-   * covered through a full rotation).
+   * RO transform — the image now has an EMPTY podium, so the 3D RO simply rests
+   * on it at natural scale (no need to over-cover a baked purifier).
    */
-  roPosition: [-0.16, 0.58, 0] as const,
-  roScale: 1.18,
+  roPosition: [0, 0.4, 0] as const,
+  roScale: 1.0,
   /** Ground shadow-catcher Y (matches the podium top in the image). */
-  shadowPlaneY: 0.6,
+  shadowPlaneY: 0.62,
   /** Subtle pointer parallax on the background (px at the extremes). */
   parallaxStrength: 12,
 } as const;
