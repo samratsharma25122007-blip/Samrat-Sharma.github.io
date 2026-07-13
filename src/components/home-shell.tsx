@@ -24,7 +24,7 @@ export function HomeShell() {
   if (HERO_MODE === 'cinematic') {
     // A still-image backdrop gets the living overlays (birds, shimmer, motes);
     // a video carries its own motion and needs none.
-    const showFX = PHOTOREAL_HERO.cinematicSrc !== '' && PHOTOREAL_HERO.cinematicKind === 'image';
+    const showFX = Boolean(PHOTOREAL_HERO.cinematicSrc) && PHOTOREAL_HERO.cinematicKind === 'image';
     return (
       <>
         {showFX && <HeroFX />}

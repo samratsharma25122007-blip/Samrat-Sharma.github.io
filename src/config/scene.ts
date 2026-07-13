@@ -40,7 +40,7 @@ export const PHOTOREAL_HERO = {
    * mode uses it (with the RO + minimal glass UI composited on top) instead of
    * the procedural world. e.g. '/hero-bg.png' or '/hero-bg.mp4'.
    */
-  cinematicSrc: '',
+  cinematicSrc: '/hero-bg.png',
   cinematicKind: 'image' as 'image' | 'video',
   /**
    * Whether the background image already has the site UI painted into it.
@@ -56,10 +56,10 @@ export const PHOTOREAL_HERO = {
    * RO transform — the image now has an EMPTY podium, so the 3D RO simply rests
    * on it at natural scale (no need to over-cover a baked purifier).
    */
-  roPosition: [0, 0.34, 0] as const,
-  roScale: 1.08,
+  roPosition: [-0.26, 0.38, 0] as const,
+  roScale: 1.0,
   /** Ground shadow-catcher Y (matches the podium top in the image). */
-  shadowPlaneY: 0.58,
+  shadowPlaneY: 0.64,
   /** Subtle pointer parallax on the background (px at the extremes). */
   parallaxStrength: 12,
 } as const;
