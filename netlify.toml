@@ -1,0 +1,18 @@
+# Netlify build configuration for the Next.js static export.
+#
+# `next build` with `output: 'export'` (see next.config.mjs) emits a fully
+# static site into `out/`. Netlify must run that build and publish `out/`.
+
+[build]
+  command = "npm run build"
+  publish = "out"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# Static-export pages use trailing-slash directories (/path/index.html).
+# Serve a friendly 404 for unknown routes.
+[[redirects]]
+  from = "/*"
+  to = "/404.html"
+  status = 404
