@@ -58,6 +58,35 @@
     border-radius: theme('borderRadius.sm');
   }
 
+  @keyframes hero-sun-pulse {
+    0%,
+    100% {
+      opacity: 0.7;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.08);
+    }
+  }
+
+  @keyframes hero-mote-float {
+    0% {
+      transform: translateY(0) translateX(0);
+      opacity: 0;
+    }
+    15% {
+      opacity: 0.8;
+    }
+    85% {
+      opacity: 0.8;
+    }
+    100% {
+      transform: translateY(-120px) translateX(16px);
+      opacity: 0;
+    }
+  }
+
   /* Respect reduced-motion at the platform level too. */
   @media (prefers-reduced-motion: reduce) {
     *,
@@ -92,6 +121,25 @@
     -webkit-backdrop-filter: blur(theme('backdropBlur.glass')) saturate(130%);
     border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: theme('boxShadow.medium');
+  }
+
+  /* Ambient sun-glow that gently breathes over the photoreal scene. */
+  .hero-sun-glow {
+    background: radial-gradient(
+      circle,
+      rgba(255, 240, 200, 0.55) 0%,
+      rgba(255, 233, 166, 0.28) 30%,
+      rgba(255, 233, 166, 0) 68%
+    );
+    animation: hero-sun-pulse 7s var(--ease-primary, ease-in-out) infinite;
+  }
+
+  /* Tiny drifting light motes layered over the image. */
+  .hero-mote {
+    position: absolute;
+    border-radius: 9999px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0));
+    animation: hero-mote-float linear infinite;
   }
 
   /*

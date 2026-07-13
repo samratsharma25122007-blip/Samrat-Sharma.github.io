@@ -34,10 +34,10 @@ export const PHOTOREAL_HERO = {
    * RO transform — the image now has an EMPTY podium, so the 3D RO simply rests
    * on it at natural scale (no need to over-cover a baked purifier).
    */
-  roPosition: [0, 0.4, 0] as const,
-  roScale: 1.0,
+  roPosition: [0, 0.34, 0] as const,
+  roScale: 1.08,
   /** Ground shadow-catcher Y (matches the podium top in the image). */
-  shadowPlaneY: 0.62,
+  shadowPlaneY: 0.58,
   /** Subtle pointer parallax on the background (px at the extremes). */
   parallaxStrength: 12,
 } as const;

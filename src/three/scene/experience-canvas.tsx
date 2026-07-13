@@ -20,6 +20,7 @@ import { Island } from '@/three/environment/island';
 import { Birds } from '@/three/environment/birds';
 import { Particles } from '@/three/environment/particles';
 import { PostProcessing } from '@/three/environment/post-processing';
+import { GradientEnvironment } from '@/three/environment/gradient-environment';
 import { CameraRig } from '@/three/camera/camera-rig';
 import { ROPurifier } from '@/three/objects/ro-purifier';
 
@@ -86,6 +87,7 @@ export function ExperienceCanvas() {
       <Suspense fallback={null}>
         {photoreal ? (
           <>
+            <GradientEnvironment />
             <Sunlight shadowResolution={1024} />
             <ROPurifier
               animate={animate}

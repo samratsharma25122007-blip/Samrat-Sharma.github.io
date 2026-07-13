@@ -5,6 +5,8 @@ import { SITE, NAV_LINKS } from '@/config/site';
 import { PHOTOREAL_HERO } from '@/config/scene';
 import { SiteHeader } from '@/components/layout/site-header';
 import { HeroSection } from '@/components/hero/hero-section';
+import { HeroFX } from '@/components/hero/hero-fx';
+import { HeroHotspots } from '@/components/hero/hero-hotspots';
 
 /**
  * HomeShell — chooses the hero presentation based on whether the photoreal
@@ -22,19 +24,25 @@ export function HomeShell() {
   // Only hide the live UI when the image itself already contains the UI.
   if (photoreal && PHOTOREAL_HERO.imageHasBakedUI) {
     return (
-      <main className="sr-only">
-        <h1>Pure Water. Protected Life.</h1>
-        <p>{SITE.description}</p>
-        <nav aria-label="Primary">
-          <ul>
-            {NAV_LINKS.map((link) => (
-              <li key={link.id}>
-                <a href={link.href}>{link.label}</a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </main>
+      <>
+        {/* Living background overlays + clickable hotspots over the baked UI. */}
+        <HeroFX />
+        <HeroHotspots />
+        {/* SEO / screen-reader content (the visible copy is baked into the image). */}
+        <main className="sr-only">
+          <h1>Pure Water. Protected Life.</h1>
+          <p>{SITE.description}</p>
+          <nav aria-label="Primary">
+            <ul>
+              {NAV_LINKS.map((link) => (
+                <li key={link.id}>
+                  <a href={link.href}>{link.label}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </main>
+      </>
     );
   }
 
