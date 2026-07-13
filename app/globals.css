@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/**
+ * Global base — the ambient water world. Kept minimal; component styling lives
+ * with components. Values reference the design tokens via Tailwind theme.
+ */
+
+@layer base {
+  :root {
+    color-scheme: light;
+    /* Ocean-blue thin scrollbar (PRD Part 2). */
+    scrollbar-width: thin;
+    scrollbar-color: theme('colors.ocean') transparent;
+  }
+
+  html {
+    /* Lenis manages smooth scroll; disable native smooth to avoid conflict. */
+    scroll-behavior: auto;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: theme('colors.bg.primary');
+    color: theme('colors.ink.DEFAULT');
+    font-family: theme('fontFamily.sans');
+    /* Never a jarring white flash — start in the ambient wash. */
+    background-image: theme('backgroundImage.gradient-ambient');
+    min-height: 100dvh;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background-color: theme('colors.water');
+    color: theme('colors.ink.DEFAULT');
+  }
+
+  /* WebKit thin rounded scrollbar. */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: theme('colors.ocean');
+    border-radius: theme('borderRadius.sm');
+    opacity: 0.6;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  /* Accessible focus ring — visible, on-brand, never removed. */
+  :focus-visible {
+    outline: 2px solid theme('colors.ocean');
+    outline-offset: 3px;
+    border-radius: theme('borderRadius.sm');
+  }
+
+  /* Respect reduced-motion at the platform level too. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* Reusable glass surface — the material foundation of every component (Part 11). */
+  .glass-surface {
+    background: theme('colors.glass.DEFAULT');
+    backdrop-filter: blur(theme('backdropBlur.glass')) saturate(140%);
+    -webkit-backdrop-filter: blur(theme('backdropBlur.glass')) saturate(140%);
+    border: 1px solid theme('colors.glass.border');
+    box-shadow: theme('boxShadow.soft');
+  }
+}

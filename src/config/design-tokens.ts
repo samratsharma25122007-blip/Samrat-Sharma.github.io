@@ -1,49 +1,76 @@
 /**
  * Design Tokens — the single source of truth for the RO Care India visual system.
  *
- * Every color, spacing step, radius, shadow and typographic value defined in the
- * Design Language (PRD Part 2) lives here. Tailwind, the DOM components and the
- * Three.js scene all consume these values so the entire experience stays in one
- * rhythm. Never hardcode a raw hex or pixel value elsewhere — import from here.
+ * COLORS follow the OFFICIAL tropical-luxury palette (PRD Part 11.5 + the
+ * approved concept artwork, which is the ultimate visual authority). The
+ * aesthetic is an untouched tropical island at 8:30 AM: ocean blues, golden
+ * sunlight, palm greens, cream sand and pure-white cleanliness. Never neon,
+ * never flat corporate blue. Tailwind, the DOM and the Three.js scene all
+ * consume these values so the whole experience stays in one visual language.
  */
 
-/** Brand color palette. Never pure white (#FFF) or pure black (#000). */
+/** Official palette — every value traceable to the approved art direction. */
 export const COLORS = {
-  // Backgrounds
-  bgPrimary: '#F8FCFF',
-  bgSecondary: '#F3FAFD',
+  // Primary — water
+  oceanBlue: '#1F6FBF',
+  lagoonBlue: '#3CAEDB',
+  crystalWater: '#82DDF5',
+  deepOcean: '#0C3D72',
 
-  // Water / brand blues
-  oceanBlue: '#1597FF',
-  lightWaterBlue: '#77D7FF',
-  crystalCyan: '#DFF8FF',
-  skyGradient: '#DDF7FF',
-  deepOcean: '#0057C8',
-  accent: '#00AEEF',
+  // Accent — warmth & nature
+  sunlightGold: '#F6D26B',
+  warmSand: '#F3E4C6',
+  palmGreen: '#3E8F57',
+  leafHighlight: '#6BCB77',
 
-  // Semantic
-  success: '#39C97C',
-  danger: '#FF6464',
+  // Neutrals — cleanliness
+  pureWhite: '#FFFFFF',
+  softWhite: '#F8FBFD',
+  lightMist: '#EEF7FB',
 
-  // Text
-  textPrimary: '#0A1B2B',
-  textSecondary: '#4F6778',
-  textMuted: '#93A6B5',
+  // Dark — depth & ink
+  deepNavy: '#08243E',
+  oceanShadow: '#12395D',
+  textPrimary: '#0F172A',
+  textSecondary: '#506173',
+
+  // Semantic states (on-brand, non-neon; success = palm green)
+  success: '#3E8F57',
+  danger: '#E4738B',
+
+  // Semantic background aliases (large fills — never pure white)
+  bgPrimary: '#F8FBFD',
+  bgSecondary: '#EEF7FB',
 } as const;
 
-/** Translucent glass surfaces. */
+/**
+ * Translucent glass — a subtle blue tint (never grey), bright thin edges, and
+ * a highlight sheen. Glass must always read as if reflecting the ocean.
+ */
 export const GLASS = {
-  background: 'rgba(255, 255, 255, 0.18)',
-  border: 'rgba(255, 255, 255, 0.25)',
+  background: 'rgba(240, 249, 255, 0.18)',
+  border: 'rgba(255, 255, 255, 0.28)',
+  highlight: 'rgba(255, 255, 255, 0.45)',
   blur: '30px',
 } as const;
 
-/** Signature gradients from the design language. */
+/**
+ * Signature gradients from the art direction. Natural, physically believable —
+ * no purple, no cyberpunk.
+ */
 export const GRADIENTS = {
-  /** Crystal → primary background (ambient wash). */
-  ambient: `linear-gradient(180deg, ${COLORS.crystalCyan} 0%, ${COLORS.bgPrimary} 100%)`,
-  /** Light water → ocean (primary CTA / accents). */
-  water: `linear-gradient(135deg, ${COLORS.lightWaterBlue} 0%, ${COLORS.oceanBlue} 100%)`,
+  /** Ocean Blue → Lagoon Blue (primary CTA / water accents). */
+  ocean: `linear-gradient(135deg, ${COLORS.oceanBlue} 0%, ${COLORS.lagoonBlue} 100%)`,
+  /** Crystal Water → pale mist (shallow lagoon). */
+  lagoon: `linear-gradient(180deg, ${COLORS.crystalWater} 0%, #D9F8FF 100%)`,
+  /** Golden Sunrise (morning light glow / hover highlights). */
+  sunGlow: `linear-gradient(180deg, ${COLORS.sunlightGold} 0%, #FFE9A6 100%)`,
+  /** Warm Sand → cream (beach). */
+  beach: `linear-gradient(180deg, ${COLORS.warmSand} 0%, #FFF7EB 100%)`,
+  /** Soft ambient page wash (mist → cloud white). */
+  ambient: `linear-gradient(180deg, ${COLORS.lightMist} 0%, ${COLORS.softWhite} 100%)`,
+  /** Primary CTA alias. */
+  water: `linear-gradient(135deg, ${COLORS.oceanBlue} 0%, ${COLORS.lagoonBlue} 100%)`,
   /** Transparent → soft white (glass sheen). */
   sheen: 'linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.7) 100%)',
 } as const;
@@ -74,12 +101,15 @@ export const RADIUS = {
   full: '9999px',
 } as const;
 
-/** Ultra-soft shadow system — nothing harsh. */
+/**
+ * Ultra-soft shadow system — nothing harsh. Shadows carry a subtle blue tone
+ * (Deep Navy #08243E), never pure black, per the art direction.
+ */
 export const SHADOWS = {
-  sm: '0 10px 30px rgba(0, 0, 0, 0.05)',
-  md: '0 20px 60px rgba(0, 0, 0, 0.08)',
-  lg: '0 40px 100px rgba(0, 0, 0, 0.12)',
-  glow: `0 20px 60px rgba(21, 151, 255, 0.28)`,
+  sm: '0 10px 30px rgba(8, 36, 62, 0.06)',
+  md: '0 20px 60px rgba(8, 36, 62, 0.10)',
+  lg: '0 40px 100px rgba(8, 36, 62, 0.14)',
+  glow: '0 20px 60px rgba(31, 111, 191, 0.30)',
 } as const;
 
 /** Typography scale (px + weight + tracking) from the design language. */

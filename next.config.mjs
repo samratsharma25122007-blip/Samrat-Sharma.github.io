@@ -12,6 +12,9 @@ const nextConfig = {
   reactStrictMode: true,
   // The export target has no image optimization server.
   images: { unoptimized: true },
+  // Lint runs as a dedicated CI step (`npm run lint`); TypeScript (`tsc`) is the
+  // build-time static-analysis gate. This keeps deploys deterministic.
+  eslint: { ignoreDuringBuilds: true },
   // Emit /path/index.html so deep links resolve on static hosting.
   trailingSlash: true,
   // GLSL shaders are imported as raw strings.
