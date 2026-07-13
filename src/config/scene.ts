@@ -21,6 +21,12 @@ import { COLORS } from '@/config/design-tokens';
 export const PHOTOREAL_HERO = {
   imagePath: '/hero-plate.png',
   /**
+   * Optional looping background video (e.g. a PixVerse clip of the empty-podium
+   * scene) for real birds/water/tree motion. When set, it replaces the still
+   * image; leave '' to use the image. Point at e.g. '/hero.mp4'.
+   */
+  videoPath: '',
+  /**
    * Whether the background image already has the site UI painted into it.
    *  - true  (current mockup): hide the live DOM UI to avoid doubling.
    *  - false (clean plate): show the real functional UI over the image.

@@ -87,6 +87,37 @@
     }
   }
 
+  @keyframes hero-bird-fly {
+    0% {
+      transform: translate(-12vw, 0) rotate(-2deg);
+    }
+    50% {
+      transform: translate(50vw, -4vh) rotate(1deg);
+    }
+    100% {
+      transform: translate(114vw, 1vh) rotate(-1deg);
+    }
+  }
+
+  @keyframes hero-bird-flap {
+    0%,
+    100% {
+      transform: scaleY(1);
+    }
+    50% {
+      transform: scaleY(0.55);
+    }
+  }
+
+  @keyframes hero-water-drift {
+    0% {
+      background-position: 0% 0;
+    }
+    100% {
+      background-position: 240% 0;
+    }
+  }
+
   /* Respect reduced-motion at the platform level too. */
   @media (prefers-reduced-motion: reduce) {
     *,
@@ -140,6 +171,36 @@
     border-radius: 9999px;
     background: radial-gradient(circle, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0));
     animation: hero-mote-float linear infinite;
+  }
+
+  /* A bird gliding across the sky; the SVG flaps via a subtle vertical scale. */
+  .hero-bird {
+    position: absolute;
+    animation: hero-bird-fly linear infinite;
+  }
+  .hero-bird svg {
+    animation: hero-bird-flap 0.55s ease-in-out infinite;
+    transform-origin: center;
+  }
+
+  /* Moving light bands over the water region to fake shimmer/caustics. */
+  .hero-water-shimmer {
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 46%;
+    background:
+      repeating-linear-gradient(
+        104deg,
+        transparent 0 42px,
+        rgba(255, 255, 255, 0.05) 46px,
+        transparent 52px 90px
+      );
+    background-size: 240% 100%;
+    mix-blend-mode: screen;
+    opacity: 0.6;
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 55%);
+    mask-image: linear-gradient(to bottom, transparent, #000 55%);
+    animation: hero-water-drift 14s linear infinite;
   }
 
   /*

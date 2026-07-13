@@ -1,10 +1,13 @@
 /**
- * HeroFX — subtle "living" overlays on the photoreal image (PRD Part 10):
- * a breathing sun-glow near the scene's light source and a few drifting light
- * motes. Purely decorative (aria-hidden) and CSS-driven, so it costs almost
- * nothing and honors reduced-motion via the global media query.
+ * HeroFX — "living" overlays on the photoreal image (PRD Part 10): a breathing
+ * sun-glow, drifting light motes, gliding birds and a water-shimmer band. Purely
+ * decorative (aria-hidden), CSS-driven and reduced-motion aware.
  *
- * Mote positions are a fixed set (no Math.random) to avoid hydration mismatch.
+ * Note: overlays can only *add* motion on top of the still photo — the baked
+ * palms/water can't be moved. For full scene motion (waves, swaying trees) use a
+ * looping background video (see HeroBackground's video support).
+ *
+ * Positions are a fixed set (no Math.random) to avoid hydration mismatch.
  */
 const MOTES = [
   { left: '18%', top: '68%', size: 6, duration: 14, delay: 0 },
@@ -17,6 +20,29 @@ const MOTES = [
   { left: '54%', top: '64%', size: 4, duration: 17, delay: 1 },
 ] as const;
 
+const BIRDS = [
+  { top: '16%', size: 34, duration: 26, delay: 0 },
+  { top: '22%', size: 26, duration: 32, delay: 6 },
+  { top: '12%', size: 30, duration: 29, delay: 13 },
+  { top: '27%', size: 22, duration: 36, delay: 20 },
+] as const;
+
+function Bird({ size }: { size: number }) {
+  return (
+    <svg
+      width={size}
+      height={size * 0.4}
+      viewBox="0 0 40 16"
+      fill="none"
+      stroke="rgba(30, 42, 56, 0.7)"
+      strokeWidth={2}
+      strokeLinecap="round"
+    >
+      <path d="M2 11 Q10 2 20 10 Q30 2 38 11" />
+    </svg>
+  );
+}
+
 export function HeroFX() {
   return (
     <div aria-hidden className="pointer-events-none fixed inset-0 -z-[5] overflow-hidden">
@@ -25,6 +51,25 @@ export function HeroFX() {
         className="hero-sun-glow absolute h-[520px] w-[520px] rounded-full"
         style={{ right: '-4%', top: '2%' }}
       />
+
+      {/* Shimmering light bands over the water. */}
+      <div className="hero-water-shimmer" />
+
+      {/* Gliding birds. */}
+      {BIRDS.map((bird, i) => (
+        <div
+          key={i}
+          className="hero-bird"
+          style={{
+            top: bird.top,
+            animationDuration: `${bird.duration}s`,
+            animationDelay: `${bird.delay}s`,
+          }}
+        >
+          <Bird size={bird.size} />
+        </div>
+      ))}
+
       {/* Drifting light motes. */}
       {MOTES.map((mote, i) => (
         <span
