@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { RoundedBox } from '@react-three/drei';
 import * as THREE from 'three';
@@ -70,9 +70,38 @@ export function ROPurifier({
       }),
     [],
   );
-  const logoMaterial = useMemo(
-    () => new THREE.MeshStandardMaterial({ color: 0xdfe6ec, roughness: 0.5 }),
-    [],
+  // "RO CARE INDIA" branding drawn to a canvas texture (no external font).
+  const brandingTexture = useMemo(() => {
+    if (typeof document === 'undefined') return null;
+    const canvas = document.createElement('canvas');
+    canvas.width = 512;
+    canvas.height = 256;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return null;
+    ctx.clearRect(0, 0, 512, 256);
+    ctx.fillStyle = '#eef4f8';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = '700 96px Georgia, serif';
+    ctx.fillText('RO', 256, 96);
+    ctx.font = '600 40px Arial, sans-serif';
+    try {
+      ctx.letterSpacing = '10px';
+    } catch {
+      /* letterSpacing unsupported — fall back to default */
+    }
+    ctx.fillText('CARE INDIA', 256, 176);
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.colorSpace = THREE.SRGBColorSpace;
+    texture.anisotropy = 4;
+    return texture;
+  }, []);
+
+  useEffect(
+    () => () => {
+      brandingTexture?.dispose();
+    },
+    [brandingTexture],
   );
   const glassMaterial = useMemo(
     () =>
@@ -136,19 +165,17 @@ export function ROPurifier({
         castShadow
       />
 
-      {/* "P" brand mark (simple ring + stem, upper front). */}
-      <group position={[0, 1.42, 0.31]}>
-        <mesh material={logoMaterial}>
-          <torusGeometry args={[0.05, 0.012, 8, 24]} />
+      {/* "RO CARE INDIA" branding on the upper front. */}
+      {brandingTexture && (
+        <mesh position={[0, 1.44, 0.311]}>
+          <planeGeometry args={[0.42, 0.21]} />
+          <meshBasicMaterial map={brandingTexture} transparent toneMapped={false} />
         </mesh>
-        <mesh position={[-0.05, -0.06, 0]} material={logoMaterial}>
-          <boxGeometry args={[0.012, 0.12, 0.012]} />
-        </mesh>
-      </group>
+      )}
 
       {/* Vertical blue LED strip. */}
-      <mesh position={[0, 1.06, 0.31]} material={ledMaterial}>
-        <boxGeometry args={[0.035, 0.3, 0.02]} />
+      <mesh position={[0, 1.02, 0.311]} material={ledMaterial}>
+        <boxGeometry args={[0.035, 0.26, 0.02]} />
       </mesh>
 
       {/* Recessed dispensing area + nozzle. */}

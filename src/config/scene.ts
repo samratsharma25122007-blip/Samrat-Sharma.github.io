@@ -35,8 +35,8 @@ export const PHOTOREAL_HERO = {
    * projection so the 3D RO covers the baked one (slightly larger so it stays
    * covered through a full rotation).
    */
-  roPosition: [-0.16, 0.59, 0] as const,
-  roScale: 1.05,
+  roPosition: [-0.16, 0.58, 0] as const,
+  roScale: 1.18,
   /** Ground shadow-catcher Y (matches the podium top in the image). */
   shadowPlaneY: 0.6,
   /** Subtle pointer parallax on the background (px at the extremes). */
