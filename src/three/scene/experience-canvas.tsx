@@ -5,6 +5,7 @@ import { Canvas } from '@react-three/fiber';
 import * as THREE from 'three';
 
 import { usePrefersReducedMotion } from '@/lib/hooks/use-prefers-reduced-motion';
+import { useDragRotate } from '@/lib/hooks/use-drag-rotate';
 import { useExperienceStore } from '@/state/experience-store';
 import { MINIMAL_PRESET, resolveQualityPreset } from '@/config/quality';
 import { CAMERA_CONFIG, SCENE_COLORS } from '@/config/scene';
@@ -12,6 +13,7 @@ import { CAMERA_CONFIG, SCENE_COLORS } from '@/config/scene';
 import { SkyDome } from '@/three/environment/sky-dome';
 import { Sunlight } from '@/three/environment/sunlight';
 import { Ocean } from '@/three/environment/ocean';
+import { Beach } from '@/three/environment/beach';
 import { Pedestal } from '@/three/environment/pedestal';
 import { PalmField } from '@/three/environment/palm-trees';
 import { Island } from '@/three/environment/island';
@@ -19,6 +21,7 @@ import { Birds } from '@/three/environment/birds';
 import { Particles } from '@/three/environment/particles';
 import { PostProcessing } from '@/three/environment/post-processing';
 import { CameraRig } from '@/three/camera/camera-rig';
+import { ROPurifier } from '@/three/objects/ro-purifier';
 
 /**
  * ExperienceCanvas — the single persistent 3D world (PRD Parts 3, 10 & 13).
@@ -35,6 +38,9 @@ export function ExperienceCanvas() {
   const preset = prefersReducedMotion ? MINIMAL_PRESET : resolveQualityPreset(quality);
   const animate = !prefersReducedMotion;
   const sparkle = preset.realtimeReflections ? 0.6 : 0.3;
+
+  // Drag-to-rotate the RO (window-level so it works behind the DOM).
+  const roRotation = useDragRotate();
 
   return (
     <Canvas
@@ -64,7 +70,9 @@ export function ExperienceCanvas() {
         <Sunlight shadowResolution={preset.shadowResolution} />
         <Ocean subdivisions={preset.waveSubdivisions} sparkle={sparkle} animate={animate} />
         <Island />
+        <Beach />
         <Pedestal />
+        <ROPurifier animate={animate} rotationRef={roRotation} />
         <PalmField animate={animate} />
         <Birds animate={animate} />
         <Particles count={preset.particles} animate={animate} />

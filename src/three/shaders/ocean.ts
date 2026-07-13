@@ -75,8 +75,9 @@ export const oceanVertexShader = /* glsl */ `
 export const oceanFragmentShader = /* glsl */ `
   precision highp float;
 
-  uniform vec3 uShallowColor;
-  uniform vec3 uDeepColor;
+  uniform vec3 uShallowColor;   // bright crystal cyan (lagoon)
+  uniform vec3 uMidColor;       // turquoise
+  uniform vec3 uDeepColor;      // deep ocean blue
   uniform vec3 uFoamColor;
   uniform vec3 uSkyColor;
   uniform vec3 uSunColor;
@@ -85,44 +86,64 @@ export const oceanFragmentShader = /* glsl */ `
   uniform float uTime;
   uniform float uFoamThreshold;
   uniform float uSparkle;
+  uniform float uLagoonRadius;  // radius of the bright shallow lagoon
 
   varying vec3 vWorldPosition;
   varying vec3 vNormal;
   varying float vElevation;
 
-  // Cheap hash-based sparkle noise.
   float hash(vec2 p) {
     return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
+  }
+
+  // Animated caustic banding for the shallow lagoon.
+  float caustics(vec2 p, float t) {
+    float c = 0.0;
+    c += sin(p.x * 3.0 + t * 1.2) * sin(p.y * 3.0 - t);
+    c += sin(p.x * 6.0 - t) * sin(p.y * 5.0 + t * 1.3) * 0.5;
+    return pow(max(c * 0.5 + 0.5, 0.0), 2.0);
   }
 
   void main() {
     vec3 normal = normalize(vNormal);
     vec3 viewDir = normalize(uCameraPosition - vWorldPosition);
 
-    // Fresnel — more reflective (sky-tinted) at grazing angles.
     float fresnel = pow(1.0 - max(dot(viewDir, normal), 0.0), 3.0);
 
-    // Depth/elevation blend: crests read shallower/turquoise, troughs deep blue.
-    float depthMix = smoothstep(-1.0, 1.0, vElevation);
-    vec3 waterColor = mix(uDeepColor, uShallowColor, depthMix);
+    // Radial shallow->deep gradient: bright turquoise lagoon near the centre,
+    // deepening to ocean blue outward (matches the concept artwork).
+    float dist = length(vWorldPosition.xz);
+    float shallow = 1.0 - smoothstep(0.0, uLagoonRadius, dist);
+    float mid = 1.0 - smoothstep(uLagoonRadius, uLagoonRadius * 3.0, dist);
 
-    // Blend toward sky reflection via fresnel.
-    vec3 color = mix(waterColor, uSkyColor, fresnel * 0.6);
+    vec3 waterColor = uDeepColor;
+    waterColor = mix(waterColor, uMidColor, mid);
+    waterColor = mix(waterColor, uShallowColor, shallow);
 
-    // Sun specular glint (Blinn-Phong, tight highlight).
+    // Crest lightening from wave elevation.
+    waterColor = mix(waterColor, uShallowColor, smoothstep(0.0, 1.2, vElevation) * 0.25);
+
+    // Sky reflection via fresnel.
+    vec3 color = mix(waterColor, uSkyColor, fresnel * 0.4);
+
+    // Caustics visible mostly in the shallow lagoon.
+    float caus = caustics(vWorldPosition.xz * 0.5, uTime) * shallow;
+    color += uShallowColor * caus * 0.2;
+
+    // Sun specular glint (tight Blinn-Phong highlight), softened.
     vec3 halfVec = normalize(viewDir + normalize(uSunDirection));
-    float spec = pow(max(dot(normal, halfVec), 0.0), 220.0);
-    color += uSunColor * spec * 1.4;
+    float spec = pow(max(dot(normal, halfVec), 0.0), 200.0);
+    color += uSunColor * spec * 0.7;
 
     // Foam on the highest crests.
-    float foam = smoothstep(uFoamThreshold, uFoamThreshold + 0.25, vElevation);
-    color = mix(color, uFoamColor, foam * 0.6);
+    float foam = smoothstep(uFoamThreshold, uFoamThreshold + 0.22, vElevation);
+    color = mix(color, uFoamColor, foam * 0.5);
 
-    // Faint drifting sparkle on the surface.
+    // Faint drifting sparkle.
     float sparkle = step(0.9992, hash(floor(vWorldPosition.xz * 12.0) + floor(uTime * 3.0)));
     color += uSunColor * sparkle * uSparkle;
 
-    gl_FragColor = vec4(color, 0.92);
+    gl_FragColor = vec4(color, 0.96);
     #include <colorspace_fragment>
   }
 `;

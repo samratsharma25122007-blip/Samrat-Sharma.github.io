@@ -82,6 +82,19 @@
   }
 
   /*
+   * Dark navy-tinted glass — for panels carrying white text over the bright
+   * scene (concept artwork's 7-stage & stats panels). Keeps a subtle blue tint,
+   * bright edge and blur, but a dark base so light text stays legible.
+   */
+  .glass-dark {
+    background: rgba(8, 36, 62, 0.38);
+    backdrop-filter: blur(theme('backdropBlur.glass')) saturate(130%);
+    -webkit-backdrop-filter: blur(theme('backdropBlur.glass')) saturate(130%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: theme('boxShadow.medium');
+  }
+
+  /*
    * Soft dark-left gradient behind hero text — lets the white headline read
    * over the bright ocean without a hard panel, matching the concept artwork.
    * Blue-toned (Deep Navy), never pure black.

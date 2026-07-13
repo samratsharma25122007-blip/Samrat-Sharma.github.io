@@ -16,8 +16,8 @@ export const CAMERA_CONFIG = {
   fov: 35,
   near: 0.1,
   far: 1000,
-  position: [0, 2.2, 9] as const,
-  target: [0, 1.0, 0] as const,
+  position: [0, 1.8, 7] as const,
+  target: [0, 1.05, 0] as const,
   /** Idle "handheld breathing" amplitude (world units) and speed. */
   breathAmplitude: 0.06,
   breathSpeed: 0.35,
@@ -76,6 +76,7 @@ export const SCENE_COLORS = {
   sunLight: parseHex(COLORS.sunlightGold),
   sunWarm: 0xfff0c4,
   oceanShallow: parseHex(COLORS.crystalWater),
+  oceanMid: parseHex(COLORS.lagoonBlue),
   oceanDeep: parseHex(COLORS.deepOcean),
   foam: 0xffffff,
   ambient: parseHex(COLORS.lightMist),

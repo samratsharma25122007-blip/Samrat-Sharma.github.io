@@ -1,15 +1,18 @@
 import type { Config } from 'tailwindcss';
 
-import {
-  COLORS,
-  GLASS,
-  GRADIENTS,
-  RADIUS,
-  SHADOWS,
-  SPACING,
-  TYPOGRAPHY,
-} from './src/config/design-tokens';
+import { COLORS, GLASS, GRADIENTS, RADIUS, SHADOWS, TYPOGRAPHY } from './src/config/design-tokens';
 import { EASING_CSS } from './src/config/motion';
+
+/**
+ * Full px-based spacing scale (0–400 in 1px steps) plus a 1px `px` step.
+ * Numeric utilities therefore mean exactly N pixels (p-20 = 20px), which keeps
+ * the design-token rhythm (8/16/24/32/48/64/96/128/160/192) available while
+ * avoiding accidental rem fallbacks for in-between values.
+ */
+const spacingScale: Record<string, string> = { px: '1px' };
+for (let i = 0; i <= 400; i += 1) {
+  spacingScale[i] = `${i}px`;
+}
 
 /**
  * Tailwind is configured purely from the design tokens (single source of truth).
@@ -58,7 +61,7 @@ const config: Config = {
         body: [TYPOGRAPHY.body.size, { lineHeight: TYPOGRAPHY.body.leading }],
         small: [TYPOGRAPHY.small.size, { lineHeight: TYPOGRAPHY.small.leading }],
       },
-      spacing: SPACING,
+      spacing: spacingScale,
       borderRadius: {
         sm: RADIUS.sm,
         md: RADIUS.md,

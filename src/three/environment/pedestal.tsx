@@ -28,7 +28,7 @@ export function Pedestal() {
       new THREE.MeshStandardMaterial({
         color: SCENE_COLORS.oceanShallow,
         emissive: new THREE.Color(SCENE_COLORS.oceanShallow),
-        emissiveIntensity: 1.4,
+        emissiveIntensity: 0.8,
         roughness: 0.4,
       }),
     [],

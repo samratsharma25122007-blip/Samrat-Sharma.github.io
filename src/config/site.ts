@@ -14,6 +14,16 @@ export const SITE = {
   locale: 'en_IN',
 } as const;
 
+/** Primary navigation (concept artwork). */
+export const NAV_LINKS = [
+  { id: 'home', label: 'Home', href: '#home' },
+  { id: 'technology', label: 'Our Technology', href: '#technology' },
+  { id: 'purification', label: 'Water Purification', href: '#purification' },
+  { id: 'service', label: 'Service', href: '#service' },
+  { id: 'about', label: 'About Us', href: '#about' },
+  { id: 'contact', label: 'Contact', href: '#contact' },
+] as const;
+
 export const CONTACT = {
   // TODO(owner): replace with the real business number before launch.
   phone: '+91 99999 99999',

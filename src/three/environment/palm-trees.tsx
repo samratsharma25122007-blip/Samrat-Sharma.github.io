@@ -8,16 +8,21 @@ import { PALM_POSITIONS, SCENE_COLORS } from '@/config/scene';
 
 /** Build a single drooping, tapered frond geometry (reused by every palm). */
 function createFrondGeometry(): THREE.BufferGeometry {
-  const geo = new THREE.PlaneGeometry(0.55, 2.8, 1, 8);
+  const length = 3.4;
+  const geo = new THREE.PlaneGeometry(0.7, length, 6, 14);
   const pos = geo.attributes.position;
+  const half = length / 2;
   for (let i = 0; i < pos.count; i += 1) {
     const x = pos.getX(i);
     const y = pos.getY(i);
-    // y runs -1.4..1.4 along the frond; normalize to 0..1 from base to tip.
-    const t = (y + 1.4) / 2.8;
-    // Taper width toward the tip, and droop downward quadratically.
-    pos.setX(i, x * (1 - t * 0.8));
-    pos.setZ(i, -Math.pow(t, 2) * 0.9);
+    const t = (y + half) / length; // 0 at base, 1 at tip
+    // Leaf-shape taper: widen slightly then taper to a point.
+    const width = Math.sin(t * Math.PI * 0.9) * (1 - t * 0.35);
+    pos.setX(i, x * Math.max(width, 0.05));
+    // Droop downward quadratically + a central-spine ripple for feathering.
+    const droop = -Math.pow(t, 2) * 1.3;
+    const feather = Math.sin(x * 12.0) * 0.02 * (1 - t);
+    pos.setZ(i, droop + feather);
   }
   pos.needsUpdate = true;
   geo.computeVertexNormals();
@@ -32,7 +37,7 @@ interface PalmTreeProps {
   animate: boolean;
 }
 
-const FROND_COUNT = 9;
+const FROND_COUNT = 14;
 
 /** A single procedural palm: bent trunk + a radial crown of drooping fronds. */
 function PalmTree({ position, scale, rotation, phase, animate }: PalmTreeProps) {
@@ -65,9 +70,12 @@ function PalmTree({ position, scale, rotation, phase, animate }: PalmTreeProps) 
   const fronds = useMemo(
     () =>
       Array.from({ length: FROND_COUNT }, (_, i) => {
-        const angle = (i / FROND_COUNT) * Math.PI * 2;
-        const pitch = -0.5 - Math.random() * 0.2;
-        return { angle, pitch, key: i };
+        const angle = (i / FROND_COUNT) * Math.PI * 2 + Math.random() * 0.2;
+        // Two layered rings: an upper flatter canopy and a lower drooping one.
+        const ring = i % 2;
+        const pitch = -0.15 - ring * 0.45 - Math.random() * 0.15;
+        const frondScale = 0.9 + Math.random() * 0.25;
+        return { angle, pitch, frondScale, key: i };
       }),
     [],
   );
@@ -82,28 +90,30 @@ function PalmTree({ position, scale, rotation, phase, animate }: PalmTreeProps) 
 
   return (
     <group position={position as unknown as THREE.Vector3} rotation-y={rotation} scale={scale}>
-      {/* Trunk — slightly bent via a mid pivot. */}
-      <mesh position={[0, 1.7, 0]} rotation-z={0.08} material={trunkMaterial} castShadow>
-        <cylinderGeometry args={[0.12, 0.22, 3.4, 8]} />
+      {/* Trunk — tall, tapered, gently curved. */}
+      <mesh position={[0, 2.1, 0]} rotation-z={0.12} material={trunkMaterial} castShadow>
+        <cylinderGeometry args={[0.1, 0.2, 4.2, 10]} />
       </mesh>
 
       {/* Crown of fronds. */}
-      <group ref={crownRef} position={[0.28, 3.4, 0]}>
+      <group ref={crownRef} position={[0.42, 4.2, 0]}>
         {fronds.map((frond) => (
           <mesh
             key={frond.key}
             geometry={frondGeometry}
             material={leafMaterial}
             rotation={[frond.pitch, frond.angle, 0]}
-            position={[0, 0, 0]}
+            scale={frond.frondScale}
             castShadow
           />
         ))}
-        {/* Coconut cluster hint. */}
-        <mesh position={[0, -0.1, 0]}>
-          <sphereGeometry args={[0.18, 8, 8]} />
-          <meshStandardMaterial color={SCENE_COLORS.palmTrunk} roughness={0.8} />
-        </mesh>
+        {/* Coconut cluster. */}
+        {[0.12, -0.12].map((x, i) => (
+          <mesh key={i} position={[x, -0.08, 0.05]}>
+            <sphereGeometry args={[0.11, 10, 10]} />
+            <meshStandardMaterial color={SCENE_COLORS.palmTrunk} roughness={0.8} />
+          </mesh>
+        ))}
       </group>
     </group>
   );

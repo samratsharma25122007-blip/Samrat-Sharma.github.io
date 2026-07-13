@@ -48,6 +48,7 @@ export function Ocean({ subdivisions, sparkle, animate }: OceanProps) {
       uWaveB: { value: new THREE.Vector4(...OCEAN_CONFIG.waves.b) },
       uWaveC: { value: new THREE.Vector4(...OCEAN_CONFIG.waves.c) },
       uShallowColor: { value: new THREE.Color(SCENE_COLORS.oceanShallow) },
+      uMidColor: { value: new THREE.Color(SCENE_COLORS.oceanMid) },
       uDeepColor: { value: new THREE.Color(SCENE_COLORS.oceanDeep) },
       uFoamColor: { value: new THREE.Color(SCENE_COLORS.foam) },
       uSkyColor: { value: new THREE.Color(SCENE_COLORS.zenith) },
@@ -56,6 +57,7 @@ export function Ocean({ subdivisions, sparkle, animate }: OceanProps) {
       uCameraPosition: { value: new THREE.Vector3() },
       uFoamThreshold: { value: OCEAN_CONFIG.foamThreshold },
       uSparkle: { value: sparkle },
+      uLagoonRadius: { value: 6.0 },
     }),
     // Uniform objects are stable; sparkle is synced in an effect below.
     // eslint-disable-next-line react-hooks/exhaustive-deps
