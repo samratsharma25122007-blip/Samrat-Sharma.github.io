@@ -25,6 +25,12 @@ interface ExperienceState {
   quality: QualityTier;
   /** Whether the user has enabled ambient audio (off by default, PRD Part 12). */
   audioEnabled: boolean;
+  /**
+   * True once the photoreal hero background image has loaded. When true the 3D
+   * layer renders only the interactive RO (composited over the image); when
+   * false it renders the full procedural scene as a graceful fallback.
+   */
+  heroImageLoaded: boolean;
   /** Booking submission lifecycle. */
   bookingStatus: BookingStatus;
 
@@ -34,6 +40,7 @@ interface ExperienceState {
   setRoHealth: (health: number) => void;
   setQuality: (quality: QualityTier) => void;
   toggleAudio: () => void;
+  setHeroImageLoaded: (loaded: boolean) => void;
   setBookingStatus: (status: BookingStatus) => void;
 }
 
@@ -44,6 +51,7 @@ export const useExperienceStore = create<ExperienceState>((set) => ({
   roHealth: 0,
   quality: 'adaptive',
   audioEnabled: false,
+  heroImageLoaded: false,
   bookingStatus: 'idle',
 
   setScene: (scene) => set({ scene }),
@@ -52,5 +60,6 @@ export const useExperienceStore = create<ExperienceState>((set) => ({
   setRoHealth: (roHealth) => set({ roHealth: Math.min(1, Math.max(0, roHealth)) }),
   setQuality: (quality) => set({ quality }),
   toggleAudio: () => set((state) => ({ audioEnabled: !state.audioEnabled })),
+  setHeroImageLoaded: (heroImageLoaded) => set({ heroImageLoaded }),
   setBookingStatus: (bookingStatus) => set({ bookingStatus }),
 }));

@@ -1,14 +1,14 @@
 'use client';
 
-import { Suspense } from 'react';
-import { Canvas } from '@react-three/fiber';
+import { Suspense, useEffect } from 'react';
+import { Canvas, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 
 import { usePrefersReducedMotion } from '@/lib/hooks/use-prefers-reduced-motion';
 import { useDragRotate } from '@/lib/hooks/use-drag-rotate';
 import { useExperienceStore } from '@/state/experience-store';
 import { MINIMAL_PRESET, resolveQualityPreset } from '@/config/quality';
-import { CAMERA_CONFIG, SCENE_COLORS } from '@/config/scene';
+import { CAMERA_CONFIG, PHOTOREAL_HERO, SCENE_COLORS } from '@/config/scene';
 
 import { SkyDome } from '@/three/environment/sky-dome';
 import { Sunlight } from '@/three/environment/sunlight';
@@ -23,16 +23,32 @@ import { PostProcessing } from '@/three/environment/post-processing';
 import { CameraRig } from '@/three/camera/camera-rig';
 import { ROPurifier } from '@/three/objects/ro-purifier';
 
+const CAMERA_TARGET = new THREE.Vector3(...CAMERA_CONFIG.target);
+
+/** Fixes the camera to look at the RO (photoreal composite — no rig movement). */
+function StaticCamera() {
+  const camera = useThree((s) => s.camera);
+  useEffect(() => {
+    camera.lookAt(CAMERA_TARGET);
+  }, [camera]);
+  return null;
+}
+
 /**
  * ExperienceCanvas — the single persistent 3D world (PRD Parts 3, 10 & 13).
  *
- * One Canvas hosts the entire cinematic experience so the world never resets
- * between narrative beats. Render budgets come from the active quality preset;
- * reduced-motion collapses to a minimal, still preset. Everything mounts under
- * Suspense for lazy asset streaming.
+ * Two composition modes share one canvas:
+ *  - Procedural (default / fallback): the full hand-built ocean-island scene.
+ *  - Photoreal (Option A): once the hero background image loads, only the
+ *    interactive RO + a shadow-catcher render over the transparent canvas so the
+ *    RO composites onto the photoreal image.
+ *
+ * The transparent clear is harmless in procedural mode because the sky dome
+ * fills the view; in photoreal mode it lets the image show through.
  */
 export function ExperienceCanvas() {
   const quality = useExperienceStore((state) => state.quality);
+  const photoreal = useExperienceStore((state) => state.heroImageLoaded);
   const prefersReducedMotion = usePrefersReducedMotion();
 
   const preset = prefersReducedMotion ? MINIMAL_PRESET : resolveQualityPreset(quality);
@@ -45,10 +61,10 @@ export function ExperienceCanvas() {
   return (
     <Canvas
       dpr={[1, preset.maxDpr]}
-      shadows={preset.shadowResolution > 0}
+      shadows
       gl={{
         antialias: true,
-        alpha: false,
+        alpha: true,
         powerPreference: 'high-performance',
         toneMapping: THREE.ACESFilmicToneMapping,
         toneMappingExposure: 1.05,
@@ -60,24 +76,43 @@ export function ExperienceCanvas() {
         position: [...CAMERA_CONFIG.position],
       }}
       onCreated={({ scene, gl }) => {
-        // Light haze far off so the foreground lagoon stays crystal clear.
         scene.fog = new THREE.Fog(SCENE_COLORS.fog, 90, 280);
-        gl.setClearColor(SCENE_COLORS.zenith, 1);
+        // Transparent clear — sky dome covers it in procedural mode.
+        gl.setClearColor(SCENE_COLORS.zenith, 0);
       }}
     >
       <Suspense fallback={null}>
-        <SkyDome cloudDensity={preset.cloudDensity} animate={animate} />
-        <Sunlight shadowResolution={preset.shadowResolution} />
-        <Ocean subdivisions={preset.waveSubdivisions} sparkle={sparkle} animate={animate} />
-        <Island />
-        <Beach />
-        <Pedestal />
-        <ROPurifier animate={animate} rotationRef={roRotation} />
-        <PalmField animate={animate} />
-        <Birds animate={animate} />
-        <Particles count={preset.particles} animate={animate} />
-        <CameraRig animate={animate} />
-        <PostProcessing bloom={preset.bloom} />
+        {photoreal ? (
+          <>
+            <Sunlight shadowResolution={1024} />
+            <ROPurifier animate={animate} rotationRef={roRotation} />
+            {/* Shadow-catcher grounds the RO on the image's pedestal. */}
+            <mesh
+              rotation-x={-Math.PI / 2}
+              position-y={PHOTOREAL_HERO.shadowPlaneY}
+              receiveShadow
+            >
+              <planeGeometry args={[6, 6]} />
+              <shadowMaterial opacity={0.26} />
+            </mesh>
+            <StaticCamera />
+          </>
+        ) : (
+          <>
+            <SkyDome cloudDensity={preset.cloudDensity} animate={animate} />
+            <Sunlight shadowResolution={preset.shadowResolution} />
+            <Ocean subdivisions={preset.waveSubdivisions} sparkle={sparkle} animate={animate} />
+            <Island />
+            <Beach />
+            <Pedestal />
+            <ROPurifier animate={animate} rotationRef={roRotation} />
+            <PalmField animate={animate} />
+            <Birds animate={animate} />
+            <Particles count={preset.particles} animate={animate} />
+            <CameraRig animate={animate} />
+            <PostProcessing bloom={preset.bloom} />
+          </>
+        )}
       </Suspense>
     </Canvas>
   );

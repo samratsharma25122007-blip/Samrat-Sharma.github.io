@@ -11,6 +11,24 @@
  */
 import { COLORS } from '@/config/design-tokens';
 
+/**
+ * Photoreal hero (Option A) — the AI-rendered scene image as the background with
+ * the interactive 3D RO composited on the pedestal. Drop the image at the path
+ * below (ideally with the RO removed / empty podium) and it activates.
+ *
+ * Placement is tuned to the image once it exists; these are starting values.
+ */
+export const PHOTOREAL_HERO = {
+  imagePath: '/hero-plate.jpg',
+  /** RO transform over the image's pedestal (world units). */
+  roPosition: [0, 0.25, 0] as const,
+  roScale: 1,
+  /** Ground shadow-catcher Y (matches the pedestal top in the image). */
+  shadowPlaneY: 0.26,
+  /** Subtle background drift (Ken Burns) in px at the extremes. */
+  parallaxStrength: 14,
+} as const;
+
 /** Camera setup (PRD Part 3): 35° perspective. */
 export const CAMERA_CONFIG = {
   fov: 35,

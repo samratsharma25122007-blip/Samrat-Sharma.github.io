@@ -2,6 +2,8 @@
 
 import dynamic from 'next/dynamic';
 
+import { HeroBackground } from '@/components/hero/hero-background';
+
 /**
  * The WebGL world is client-only and code-split: it never runs during SSR/SSG
  * and its (large) Three.js bundle is fetched separately from the critical HTML,
@@ -22,11 +24,12 @@ const ExperienceCanvas = dynamic(
  */
 export function SceneLayer() {
   return (
-    <div
-      aria-hidden
-      className="pointer-events-none fixed inset-0 -z-10 h-[100dvh] w-full"
-    >
-      <ExperienceCanvas />
-    </div>
+    <>
+      {/* Photoreal image background (Option A); no-op until the file exists. */}
+      <HeroBackground />
+      <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 h-[100dvh] w-full">
+        <ExperienceCanvas />
+      </div>
+    </>
   );
 }
